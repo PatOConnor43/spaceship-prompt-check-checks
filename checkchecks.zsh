@@ -22,13 +22,17 @@ SPACESHIP_CHECKCHECKS_FAILED_COLOR="${SPACESHIP_CHECKCHECKS_FAILED_COLOR="red"}"
 # Section
 # ------------------------------------------------------------------------------
 
-# Shows if there are any spaceship async jobs active
+# Shows GitHub Check status
 spaceship_checkchecks() {
-  # Return if Spaceship works syncronosly
+  # Return if Spaceship works synchronosly
   spaceship::is_prompt_async || return
 
   # Return if this section is hidden
   [[ "$SPACESHIP_CHECKCHECKS_SHOW" == false ]] && return
+
+  spaceship::exists "gh" || return
+  spaceship::exists "jq" || return
+  gh extension list | grep -q gh-check-checks || return
 
   local is_git_repo="$(spaceship::upsearch .git)"
   [[ -z "$is_git_repo" ]] && return
